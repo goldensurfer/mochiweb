@@ -1,30 +1,9 @@
-PREFIX:=../
-DEST:=$(PREFIX)$(PROJECT)
+PROJECT = mochiweb
 
-REBAR=./rebar
+ERLC_OPTS = +debug_info +warn_export_all +warn_export_vars +warn_shadow_vars +warn_obsolete_guard
 
-.PHONY: all edoc test clean build_plt dialyzer app
+PLT_APPS = hipe sasl mnesia crypto compiler syntax_tools
+DIALYZER_OPTS = -Werror_handling -Wrace_conditions -Wunmatched_returns | fgrep -v -f ./dialyzer.ignore-warning
+# -Wunderspecs
 
-all:
-	@$(REBAR) get-deps compile
-
-edoc:
-	@$(REBAR) doc
-
-test:
-	@rm -rf .eunit
-	@mkdir -p .eunit
-	@$(REBAR) skip_deps=true eunit
-
-clean:
-	@$(REBAR) clean
-
-build_plt:
-	@$(REBAR) build-plt
-
-dialyzer:
-	@$(REBAR) dialyze
-
-app:
-	@$(REBAR) create template=mochiwebapp dest=$(DEST) appid=$(PROJECT)
-
+include erlang.mk
